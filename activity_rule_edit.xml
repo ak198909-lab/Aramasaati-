@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kişi adı"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/nameEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Örn. Ahmet"
+            android:inputType="textPersonName|textCapWords" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Telefon numaraları (birden fazlaysa virgülle ayır)"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/numbersEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="0532 123 45 67"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/pickContactButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rehberden seç" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Kural türü"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/modeGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/radioAllow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sadece bu saatlerde arayabilsin" />
+
+            <RadioButton
+                android:id="@+id/radioBlock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bu saatlerde arayamasın (ör. öğle arası)" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/modeHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Günler"
+            android:textStyle="bold" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/daysContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Saat aralıkları"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/windowsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <Button
+            android:id="@+id/addWindowButton"
+            style="?attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+ Saat aralığı ekle" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/enabledSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Kural açık" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Kaydet" />
+
+        <Button
+            android:id="@+id/deleteButton"
+            style="?attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kuralı sil" />
+    </LinearLayout>
+</ScrollView>
