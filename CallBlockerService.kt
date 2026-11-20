@@ -15,11 +15,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-/**
- * Telefon her gelen aramada bu servise sorar.
- * Kural "engelle" diyorsa arama reddedilir; zil çalmaz, arayan kişi meşgul/ulaşılamıyor duyar.
- * SMS'lere hiç dokunulmaz — kişi mesaj atmaya devam edebilir.
- */
 class CallBlockerService : CallScreeningService() {
 
     override fun onScreenCall(callDetails: Call.Details) {
@@ -36,13 +31,13 @@ class CallBlockerService : CallScreeningService() {
 
         val response = if (rule != null) {
             CallResponse.Builder()
-                .setDisallowCall(true)      // aramayı kabul etme
-                .setRejectCall(true)        // reddet (zil çalmaz)
-                .setSkipCallLog(false)      // arama geçmişinde görünsün
-                .setSkipNotification(true)  // "cevapsız arama" bildirimi çıkmasın
+                .setDisallowCall(true)
+                .setRejectCall(true)
+                .setSkipCallLog(false)
+                .setSkipNotification(true)
                 .build()
         } else {
-            CallResponse.Builder().build()  // normal şekilde çalsın
+            CallResponse.Builder().build()
         }
         respondToCall(callDetails, response)
 
@@ -65,10 +60,17 @@ class CallBlockerService : CallScreeningService() {
         val pi = PendingIntent.getActivity(
             this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE
         )
+        val publicVersion = Notification.Builder(this, CHANNEL_ID)
+            .setSmallIcon(android.R.drawable.ic_menu_call)
+            .setContentTitle("Arama engellendi")
+            .setContentText("Ayrıntı için telefonun kilidini açın.")
+            .build()
         val n = Notification.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_menu_call)
             .setContentTitle("Arama engellendi")
             .setContentText("$name izin verilen saat dışında aradı.")
+            .setVisibility(Notification.VISIBILITY_PRIVATE)
+            .setPublicVersion(publicVersion)
             .setContentIntent(pi)
             .setAutoCancel(true)
             .build()
