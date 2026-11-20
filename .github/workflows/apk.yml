@@ -20,6 +20,10 @@ jobs:
           for f in activity_*.xml; do mv "$f" $P/res/layout/; done
           if [ -f AndroidManifest.xml ]; then mv AndroidManifest.xml $P/; fi
           rm -f strings.xml themes.xml build.gradle.kts settings.gradle.kts gradle.properties
+          rm -f app/build.gradle.kts
+
+          # Yedeklemeyi kapat
+          sed -i 's/android:allowBackup="true"/android:allowBackup="false"/' $P/AndroidManifest.xml
 
           cat > settings.gradle.kts <<'EOF'
           pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
@@ -53,51 +57,24 @@ jobs:
                   applicationId = "com.aramasaati.app"
                   minSdk = 29
                   targetSdk = 35
-                  versionCode = 1
-                  versionName = "1.0"
+                  versionCode = 2
+                  versionName = "1.1"
+              }
+              signingConfigs {
+                  create("release") {
+                      storeFile = file("release.p12")
+                      storeType = "pkcs12"
+                      storePassword = System.getenv("KEYSTORE_PASSWORD")
+                      keyAlias = "aramasaati"
+                      keyPassword = System.getenv("KEYSTORE_PASSWORD")
+                  }
+              }
+              buildTypes {
+                  release {
+                      isMinifyEnabled = false
+                      signingConfig = signingConfigs.getByName("release")
+                  }
               }
               compileOptions {
                   sourceCompatibility = JavaVersion.VERSION_17
-                  targetCompatibility = JavaVersion.VERSION_17
-              }
-              kotlinOptions { jvmTarget = "17" }
-          }
-          dependencies {
-              implementation("androidx.appcompat:appcompat:1.7.0")
-              implementation("com.google.android.material:material:1.12.0")
-          }
-          EOF
-
-          cat > $P/res/values/strings.xml <<'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <resources>
-              <string name="app_name">Arama Saati</string>
-              <string name="edit_title">Kural</string>
-          </resources>
-          EOF
-
-          cat > $P/res/values/themes.xml <<'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <resources>
-              <style name="Theme.AramaSaati" parent="Theme.Material3.DayNight" />
-          </resources>
-          EOF
-
-          find app -type f
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "8.9"
-
-      - name: APK olustur
-        run: gradle assembleDebug --no-daemon
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: AramaSaati-apk
-          path: app/build/outputs/apk/debug/*.apk
+                  targetCompatibility = JavaVersion.VER
