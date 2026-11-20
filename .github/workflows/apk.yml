@@ -10,6 +10,81 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Klasorleri hazirla
+        run: |
+          set -e
+          shopt -s nullglob
+          P=app/src/main
+          mkdir -p $P/java/com/aramasaati/app $P/res/layout $P/res/values
+          for f in *.kt; do mv "$f" $P/java/com/aramasaati/app/; done
+          for f in activity_*.xml; do mv "$f" $P/res/layout/; done
+          if [ -f AndroidManifest.xml ]; then mv AndroidManifest.xml $P/; fi
+          rm -f strings.xml themes.xml build.gradle.kts settings.gradle.kts gradle.properties
+
+          cat > settings.gradle.kts <<'EOF'
+          pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+          dependencyResolutionManagement { repositories { google(); mavenCentral() } }
+          rootProject.name = "AramaSaati"
+          include(":app")
+          EOF
+
+          cat > build.gradle.kts <<'EOF'
+          plugins {
+              id("com.android.application") version "8.7.3" apply false
+              id("org.jetbrains.kotlin.android") version "2.0.21" apply false
+          }
+          EOF
+
+          cat > gradle.properties <<'EOF'
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          android.useAndroidX=true
+          android.nonTransitiveRClass=true
+          EOF
+
+          cat > app/build.gradle.kts <<'EOF'
+          plugins {
+              id("com.android.application")
+              id("org.jetbrains.kotlin.android")
+          }
+          android {
+              namespace = "com.aramasaati.app"
+              compileSdk = 35
+              defaultConfig {
+                  applicationId = "com.aramasaati.app"
+                  minSdk = 29
+                  targetSdk = 35
+                  versionCode = 1
+                  versionName = "1.0"
+              }
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+              kotlinOptions { jvmTarget = "17" }
+          }
+          dependencies {
+              implementation("androidx.appcompat:appcompat:1.7.0")
+              implementation("com.google.android.material:material:1.12.0")
+          }
+          EOF
+
+          cat > $P/res/values/strings.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <string name="app_name">Arama Saati</string>
+              <string name="edit_title">Kural</string>
+          </resources>
+          EOF
+
+          cat > $P/res/values/themes.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <style name="Theme.AramaSaati" parent="Theme.Material3.DayNight" />
+          </resources>
+          EOF
+
+          find app -type f
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -19,7 +94,7 @@ jobs:
         with:
           gradle-version: "8.9"
 
-      - name: APK oluştur
+      - name: APK olustur
         run: gradle assembleDebug --no-daemon
 
       - uses: actions/upload-artifact@v4
